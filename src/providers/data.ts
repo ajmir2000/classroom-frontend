@@ -1,6 +1,7 @@
 import { createDataProvider, CreateDataProviderOptions } from "@refinedev/rest";
 import { BACKEND_BASE_URL } from "@/constants";
 import { ListResponse } from "@/types";
+import { CreateResponse } from "@refinedev/core";
 
 if (!BACKEND_BASE_URL) {
   throw new Error(
@@ -39,6 +40,10 @@ const options: CreateDataProviderOptions = {
           if (field == "department") params.department = value;
           if (field == "name" || field == "code") params.search = value;
         }
+        if (resource == "users") {
+          if (field == "role") params.role = value;
+          if (field == "name" || field == "email") params.search = value;
+        }
       });
       return params;
     },
@@ -48,9 +53,19 @@ const options: CreateDataProviderOptions = {
       return payload.data ?? [];
     },
     getTotalCount: async (response) => {
-       if (!response.ok) throw await buildHttpError(response);
+      if (!response.ok) throw await buildHttpError(response);
       const payload: ListResponse = await response.clone().json();
       return payload.pagination?.total ?? payload.data?.length ?? 0;
+    },
+  },
+  create: {
+    getEndpoint: ({ resource }) => resource,
+
+    buildBodyParams: async ({ variables }) => variables,
+
+    mapResponse: async (response) => {
+      const json: CreateResponse = await response.json();
+      return json.data ?? {};
     },
   },
 };

@@ -7,6 +7,25 @@ export type Subject = {
   createdAt?: string;
 };
 
+export type Class = {
+  id: number;
+  name: string;
+  inviteCode: string;
+  description?: string;
+  status: "active" | "inactive" | "archived";
+  capacity: number;
+  subject?: {
+    id: number;
+    name: string;
+    code: string;
+  };
+  teacher?: {
+    id: string;
+    name: string;
+  };
+  createdAt?: string;
+};
+
 export type ListResponse<T = unknown> = {
   data?: T[];
   pagination?: {

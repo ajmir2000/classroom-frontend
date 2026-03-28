@@ -19,6 +19,7 @@ import { Breadcrumb } from "@/components/refine-ui/layout/breadcrumb";
 import { DataTable } from "@/components/refine-ui/data-table/data-table";
 
 import { Class } from "@/types";
+import { ShowButton } from "@/components/refine-ui/buttons/show";
 
 export default function ClassesList() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,15 +40,17 @@ export default function ClassesList() {
     filters: [{ field: "role", operator: "eq", value: "teacher" }],
   });
 
-  const subjectOptions = subjectsData?.data?.map((subject) => ({
-    value: subject.name,
-    label: subject.name,
-  })) || [];
+  const subjectOptions =
+    subjectsData?.data?.map((subject) => ({
+      value: subject.name,
+      label: subject.name,
+    })) || [];
 
-  const teacherOptions = teachersData?.data?.map((teacher) => ({
-    value: teacher.name,
-    label: teacher.name,
-  })) || [];
+  const teacherOptions =
+    teachersData?.data?.map((teacher) => ({
+      value: teacher.name,
+      label: teacher.name,
+    })) || [];
 
   const classColumns = useMemo<ColumnDef<Class>[]>(
     () => [
@@ -87,9 +90,7 @@ export default function ClassesList() {
         cell: ({ getValue }) => {
           const status = getValue<string>();
           return (
-            <Badge
-              variant={status === "active" ? "default" : "secondary"}
-            >
+            <Badge variant={status === "active" ? "default" : "secondary"}>
               {status}
             </Badge>
           );
@@ -122,29 +123,45 @@ export default function ClassesList() {
           <span className="text-foreground">{getValue<number>()}</span>
         ),
       },
+      {
+        id: "details",
+        size: 140,
+        header: () => <p className="column-title">Details</p>,
+        cell: ({ row }) => (
+          <ShowButton
+            resource="classes"
+            recordItemId={row.original.id}
+            variant="outline"
+            size="sm">
+            View
+          </ShowButton>
+        ),
+      },
     ],
     [],
   );
 
-  const subjectFilters = selectedSubject !== "all"
-    ? [
-        {
-          field: "subject",
-          operator: "eq" as const,
-          value: selectedSubject,
-        },
-      ]
-    : [];
+  const subjectFilters =
+    selectedSubject !== "all"
+      ? [
+          {
+            field: "subject",
+            operator: "eq" as const,
+            value: selectedSubject,
+          },
+        ]
+      : [];
 
-  const teacherFilters = selectedTeacher !== "all"
-    ? [
-        {
-          field: "teacher",
-          operator: "eq" as const,
-          value: selectedTeacher,
-        },
-      ]
-    : [];
+  const teacherFilters =
+    selectedTeacher !== "all"
+      ? [
+          {
+            field: "teacher",
+            operator: "eq" as const,
+            value: selectedTeacher,
+          },
+        ]
+      : [];
 
   const searchFilters = debouncedSearchQuery
     ? [
@@ -200,9 +217,7 @@ export default function ClassesList() {
           </div>
 
           <div className="flex gap-2 w-full sm:w-auto">
-            <Select
-              value={selectedSubject}
-              onValueChange={setSelectedSubject}>
+            <Select value={selectedSubject} onValueChange={setSelectedSubject}>
               <SelectTrigger className="">
                 <SelectValue placeholder="Filter by subject" />
               </SelectTrigger>
@@ -217,9 +232,7 @@ export default function ClassesList() {
               </SelectContent>
             </Select>
 
-            <Select
-              value={selectedTeacher}
-              onValueChange={setSelectedTeacher}>
+            <Select value={selectedTeacher} onValueChange={setSelectedTeacher}>
               <SelectTrigger className="">
                 <SelectValue placeholder="Filter by teacher" />
               </SelectTrigger>

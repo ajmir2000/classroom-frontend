@@ -21,7 +21,7 @@ import { ShowButton } from "@/components/refine-ui/buttons/show";
 import { Subject } from "@/types";
 import { DEPARTMENT_OPTIONS } from "@/constants";
 
-export default function SubjectsList() {
+const SubjectListPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
 
@@ -170,4 +170,6 @@ export default function SubjectsList() {
       <DataTable table={subjectTable} />
     </ListView>
   );
-}
+};
+
+export default SubjectListPage;

@@ -16,10 +16,9 @@ export const authProvider: AuthProvider = {
         name,
         email,
         password,
-        image,
         role,
         imageCldPubId,
-      } as SignUpPayload);
+      });
 
       if (error) {
         return {

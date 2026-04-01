@@ -1,7 +1,8 @@
 import { useBack } from "@refinedev/core";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "@refinedev/react-hook-form";
-import { subjectSchema } from "@/lib/schema";
+import { userSchema } from "@/lib/schema";
+import * as z from "zod";
 import { CreateView } from "@/components/refine-ui/views/create-view";
 import { Breadcrumb } from "@/components/refine-ui/layout/breadcrumb";
 import { Button } from "@/components/ui/button";
@@ -22,40 +23,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useList } from "@refinedev/core";
-import { Subject, Department } from "@/types";
 
-export default function CreateSubject() {
+export default function CreateUser() {
   const back = useBack();
 
   const form = useForm({
-    resolver: zodResolver(subjectSchema),
-    refineCoreProps: { resource: "subjects", action: "create" },
+    resolver: zodResolver(userSchema),
+    refineCoreProps: { resource: "users", action: "create" },
+    defaultValues: { role: "student" },
   });
 
-  const { refineCore, handleSubmit, control } = form;
-  const { onFinish } = refineCore;
+  const {
+    refineCore: { onFinish },
+    control,
+    handleSubmit,
+  } = form;
 
-  const { data: departmentsData } = useList<Department>({
-    resource: "departments",
-    pagination: { pageSize: 100 },
-  });
-
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: z.infer<typeof userSchema>) => {
     await onFinish(values);
   };
 
   return (
     <CreateView>
       <Breadcrumb />
-      <h1 className="page-title">Create Subject</h1>
+      <h1 className="page-title">Create User</h1>
       <div className="intro-row">
-        <p>Create a subject and attach to a department.</p>
+        <p>Create a new account with role-based access.</p>
         <Button onClick={() => back()}>Go Back</Button>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Subject Details</CardTitle>
+          <CardTitle>User Information</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -67,7 +65,7 @@ export default function CreateSubject() {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Intro to CS" {...field} />
+                      <Input placeholder="Full name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -76,12 +74,12 @@ export default function CreateSubject() {
 
               <FormField
                 control={control}
-                name="code"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Code</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="CS101" {...field} />
+                      <Input placeholder="user@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -90,25 +88,21 @@ export default function CreateSubject() {
 
               <FormField
                 control={control}
-                name="departmentId"
+                name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Department</FormLabel>
+                    <FormLabel>Role</FormLabel>
                     <FormControl>
                       <Select
-                        onValueChange={(value) => field.onChange(Number(value))}
-                        value={field.value?.toString()}>
+                        onValueChange={field.onChange}
+                        value={field.value}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select department" />
+                          <SelectValue placeholder="Select role" />
                         </SelectTrigger>
                         <SelectContent>
-                          {departmentsData?.data?.map((dept: Department) => (
-                            <SelectItem
-                              key={dept.id}
-                              value={dept.id.toString()}>
-                              {dept.name}
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="teacher">Teacher</SelectItem>
+                          <SelectItem value="student">Student</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -117,21 +111,7 @@ export default function CreateSubject() {
                 )}
               />
 
-              <FormField
-                control={control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Subject description" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button type="submit">Create Subject</Button>
+              <Button type="submit">Create User</Button>
             </form>
           </Form>
         </CardContent>

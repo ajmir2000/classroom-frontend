@@ -110,8 +110,9 @@ export type Schedule = {
 
 export type Department = {
   id: number;
+  code: string;
   name: string;
-  description: string;
+  description?: string;
 };
 
 export type ClassDetails = {

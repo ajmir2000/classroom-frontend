@@ -17,9 +17,16 @@ import Dashboard from "./pages/dashboard";
 import { BookOpen, GraduationCap, Home } from "lucide-react";
 import SubjectsList from "./pages/subjects/list";
 import CreateSubject from "./pages/subjects/create";
+import SubjectShow from "./pages/subjects/show";
 import ClassesList from "./pages/classes/list";
 import ClassesCreate from "./pages/classes/create";
 import ClassesShow from "./pages/classes/show";
+import UsersList from "./pages/users/list";
+import UsersCreate from "./pages/users/create";
+import UsersShow from "./pages/users/show";
+import DepartmentsList from "./pages/departments/list";
+import DepartmentsCreate from "./pages/departments/create";
+import DepartmentsShow from "./pages/departments/show";
 
 function App() {
   return (
@@ -43,9 +50,24 @@ function App() {
                   meta: { label: "Home", icon: <Home /> },
                 },
                 {
+                  name: "users",
+                  list: "/users",
+                  create: "/users/create",
+                  show: "/users/show/:id",
+                  meta: { label: "Users", icon: <Users /> },
+                },
+                {
+                  name: "departments",
+                  list: "/departments",
+                  create: "/departments/create",
+                  show: "/departments/show/:id",
+                  meta: { label: "Departments", icon: <Building2 /> },
+                },
+                {
                   name: "subjects",
                   list: "/subjects",
                   create: "/subjects/create",
+                  show: "/subjects/show/:id",
                   meta: { label: "Subjects", icon: <BookOpen /> },
                 },
                 {
@@ -64,9 +86,22 @@ function App() {
                     </Layout>
                   }>
                   <Route path="/" element={<Dashboard />} />
+                  <Route path="users">
+                    <Route index element={<UsersList />} />
+                    <Route path="create" element={<UsersCreate />} />
+                    <Route path="show/:id" element={<UsersShow />} />
+                  </Route>
+
+                  <Route path="departments">
+                    <Route index element={<DepartmentsList />} />
+                    <Route path="create" element={<DepartmentsCreate />} />
+                    <Route path="show/:id" element={<DepartmentsShow />} />
+                  </Route>
+
                   <Route path="subjects">
                     <Route index element={<SubjectsList />} />
                     <Route path="create" element={<CreateSubject />} />
+                    <Route path="show/:id" element={<SubjectShow />} />
                   </Route>
 
                   <Route path="classes">

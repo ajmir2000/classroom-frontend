@@ -1,7 +1,8 @@
 import { useBack } from "@refinedev/core";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "@refinedev/react-hook-form";
-import { subjectSchema } from "@/lib/schema";
+import { departmentSchema } from "@/lib/schema";
+import * as z from "zod";
 import { CreateView } from "@/components/refine-ui/views/create-view";
 import { Breadcrumb } from "@/components/refine-ui/layout/breadcrumb";
 import { Button } from "@/components/ui/button";
@@ -15,65 +16,40 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useList } from "@refinedev/core";
-import { Subject, Department } from "@/types";
 
-export default function CreateSubject() {
+export default function CreateDepartment() {
   const back = useBack();
 
   const form = useForm({
-    resolver: zodResolver(subjectSchema),
-    refineCoreProps: { resource: "subjects", action: "create" },
+    resolver: zodResolver(departmentSchema),
+    refineCoreProps: { resource: "departments", action: "create" },
   });
 
   const { refineCore, handleSubmit, control } = form;
   const { onFinish } = refineCore;
 
-  const { data: departmentsData } = useList<Department>({
-    resource: "departments",
-    pagination: { pageSize: 100 },
-  });
-
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: z.infer<typeof departmentSchema>) => {
     await onFinish(values);
   };
 
   return (
     <CreateView>
       <Breadcrumb />
-      <h1 className="page-title">Create Subject</h1>
+      <h1 className="page-title">Create Department</h1>
       <div className="intro-row">
-        <p>Create a subject and attach to a department.</p>
+        <p>
+          Add new academic department. Deletion is blocked if subjects are
+          linked.
+        </p>
         <Button onClick={() => back()}>Go Back</Button>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Subject Details</CardTitle>
+          <CardTitle>Department Details</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Intro to CS" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={control}
                 name="code"
@@ -81,7 +57,7 @@ export default function CreateSubject() {
                   <FormItem>
                     <FormLabel>Code</FormLabel>
                     <FormControl>
-                      <Input placeholder="CS101" {...field} />
+                      <Input placeholder="CS" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -90,27 +66,12 @@ export default function CreateSubject() {
 
               <FormField
                 control={control}
-                name="departmentId"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Department</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Select
-                        onValueChange={(value) => field.onChange(Number(value))}
-                        value={field.value?.toString()}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select department" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {departmentsData?.data?.map((dept: Department) => (
-                            <SelectItem
-                              key={dept.id}
-                              value={dept.id.toString()}>
-                              {dept.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Input placeholder="Computer Science" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -124,14 +85,14 @@ export default function CreateSubject() {
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Input placeholder="Subject description" {...field} />
+                      <Input placeholder="Description" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <Button type="submit">Create Subject</Button>
+              <Button type="submit">Create Department</Button>
             </form>
           </Form>
         </CardContent>

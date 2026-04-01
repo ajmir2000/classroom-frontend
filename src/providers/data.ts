@@ -49,6 +49,10 @@ const options: CreateDataProviderOptions = {
           if (field == "role") params.role = value;
           if (field == "name" || field == "email") params.search = value;
         }
+        if (resource == "enrollments") {
+          if (field == "classId") params.classId = value;
+          if (field == "studentId") params.studentId = value;
+        }
       });
       return params;
     },
@@ -79,7 +83,23 @@ const options: CreateDataProviderOptions = {
       const json: GetOneResponse = await response.json();
       return json.data ?? [];
     },
-  }
+  },
+  update: {
+    getEndpoint: ({ resource, id }) => `${resource}/${id}`,
+    buildBodyParams: async ({ variables }) => variables,
+    mapResponse: async (response) => {
+      if (!response.ok) throw await buildHttpError(response);
+      const json = await response.json();
+      return (json as CreateResponse).data ?? {};
+    },
+  },
+  deleteOne: {
+    getEndpoint: ({ resource, id }) => `${resource}/${id}`,
+    mapResponse: async (response) => {
+      if (!response.ok) throw await buildHttpError(response);
+      return {};
+    },
+  },
 };
 
 const { dataProvider } = createDataProvider(BACKEND_BASE_URL, options);
